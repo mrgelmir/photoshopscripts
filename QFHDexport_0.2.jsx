@@ -34,10 +34,8 @@ function main()
     //set save options
     var saveOptions = new ExportOptionsSaveForWeb();
     saveOptions.format = SaveDocumentType.PNG;
-    saveOptions.PNG8 = false;
-    
-    
-    
+    saveOptions.PNG8 = false; 
+
     //generate each output
     for(var i = 0; i < Outputs.length; ++i)
     {
@@ -87,9 +85,16 @@ function getWorkingLayer(document) //duplicate selected layer(s) and merge down 
     var workingLayer = workingLayerSet.merge();
     workingLayer.name = "working layer";
     
-    //crop to canvas
-    cropToCanvas();
-    
+    if(document.selection.bounds > 1px)
+    {
+        // if a selection is present: crop to selection
+        // executeAction( app.charIDToTypeID('Crop'), new ActionDescriptor(), DialogModes.NO );
+        createLayerMask(document, workingLayer, true);
+        applyLayerMask();
+    }
+
+    // crop to canvas
+    cropToCanvas();    
     
     return workingLayer;
 }
@@ -118,51 +123,51 @@ function resizeDocument(document, value)
 function cropToCanvas()// dirty action listener code (maybe clean this up later)
 {
     var idsetd = charIDToTypeID( "setd" );
-    var desc3 = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-        var ref1 = new ActionReference();
-        var idChnl = charIDToTypeID( "Chnl" );
-        var idfsel = charIDToTypeID( "fsel" );
-        ref1.putProperty( idChnl, idfsel );
-    desc3.putReference( idnull, ref1 );
-    var idT = charIDToTypeID( "T   " );
-    var idOrdn = charIDToTypeID( "Ordn" );
-    var idAl = charIDToTypeID( "Al  " );
-    desc3.putEnumerated( idT, idOrdn, idAl );
-executeAction( idsetd, desc3, DialogModes.NO );
-
-// =======================================================
-var idMk = charIDToTypeID( "Mk  " );
-    var desc4 = new ActionDescriptor();
-    var idNw = charIDToTypeID( "Nw  " );
-    var idChnl = charIDToTypeID( "Chnl" );
-    desc4.putClass( idNw, idChnl );
-    var idAt = charIDToTypeID( "At  " );
-        var ref2 = new ActionReference();
-        var idChnl = charIDToTypeID( "Chnl" );
-        var idChnl = charIDToTypeID( "Chnl" );
-        var idMsk = charIDToTypeID( "Msk " );
-        ref2.putEnumerated( idChnl, idChnl, idMsk );
-    desc4.putReference( idAt, ref2 );
-    var idUsng = charIDToTypeID( "Usng" );
-    var idUsrM = charIDToTypeID( "UsrM" );
-    var idRvlS = charIDToTypeID( "RvlS" );
-    desc4.putEnumerated( idUsng, idUsrM, idRvlS );
-executeAction( idMk, desc4, DialogModes.NO );
-
-// =======================================================
-var idDlt = charIDToTypeID( "Dlt " );
-    var desc5 = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-        var ref3 = new ActionReference();
-        var idChnl = charIDToTypeID( "Chnl" );
+        var desc3 = new ActionDescriptor();
+        var idnull = charIDToTypeID( "null" );
+            var ref1 = new ActionReference();
+            var idChnl = charIDToTypeID( "Chnl" );
+            var idfsel = charIDToTypeID( "fsel" );
+            ref1.putProperty( idChnl, idfsel );
+        desc3.putReference( idnull, ref1 );
+        var idT = charIDToTypeID( "T   " );
         var idOrdn = charIDToTypeID( "Ordn" );
-        var idTrgt = charIDToTypeID( "Trgt" );
-        ref3.putEnumerated( idChnl, idOrdn, idTrgt );
-    desc5.putReference( idnull, ref3 );
-    var idAply = charIDToTypeID( "Aply" );
-    desc5.putBoolean( idAply, true );
-executeAction( idDlt, desc5, DialogModes.NO );
+        var idAl = charIDToTypeID( "Al  " );
+        desc3.putEnumerated( idT, idOrdn, idAl );
+    executeAction( idsetd, desc3, DialogModes.NO );
+
+    // =======================================================
+    var idMk = charIDToTypeID( "Mk  " );
+        var desc4 = new ActionDescriptor();
+        var idNw = charIDToTypeID( "Nw  " );
+        var idChnl = charIDToTypeID( "Chnl" );
+        desc4.putClass( idNw, idChnl );
+        var idAt = charIDToTypeID( "At  " );
+            var ref2 = new ActionReference();
+            var idChnl = charIDToTypeID( "Chnl" );
+            var idChnl = charIDToTypeID( "Chnl" );
+            var idMsk = charIDToTypeID( "Msk " );
+            ref2.putEnumerated( idChnl, idChnl, idMsk );
+        desc4.putReference( idAt, ref2 );
+        var idUsng = charIDToTypeID( "Usng" );
+        var idUsrM = charIDToTypeID( "UsrM" );
+        var idRvlS = charIDToTypeID( "RvlS" );
+        desc4.putEnumerated( idUsng, idUsrM, idRvlS );
+    executeAction( idMk, desc4, DialogModes.NO );
+
+    // =======================================================
+    var idDlt = charIDToTypeID( "Dlt " );
+        var desc5 = new ActionDescriptor();
+        var idnull = charIDToTypeID( "null" );
+            var ref3 = new ActionReference();
+            var idChnl = charIDToTypeID( "Chnl" );
+            var idOrdn = charIDToTypeID( "Ordn" );
+            var idTrgt = charIDToTypeID( "Trgt" );
+            ref3.putEnumerated( idChnl, idOrdn, idTrgt );
+        desc5.putReference( idnull, ref3 );
+        var idAply = charIDToTypeID( "Aply" );
+        desc5.putBoolean( idAply, true );
+    executeAction( idDlt, desc5, DialogModes.NO );
 }
 
 function getSelectedLayers() //took this from the internet. thx random dude
@@ -189,4 +194,43 @@ function getSelectedLayers() //took this from the internet. thx random dude
     executeAction( charIDToTypeID('undo'), undefined, DialogModes.NO );
         
     return layerArray;  
-};  
+}; 
+
+ cTID = function(s) { return app.charIDToTypeID(s); }; 
+sTID = function(s) { return app.stringIDToTypeID(s); }; 
+
+createLayerMask = function(doc, layer, fromSelection)
+{ 
+    var desc = new ActionDescriptor(); 
+    desc.putClass(cTID("Nw "), cTID("Chnl")); 
+    var ref = new ActionReference(); 
+    ref.putEnumerated(cTID("Chnl"), cTID("Chnl"), cTID("Msk ")); 
+    desc.putReference(cTID("At "), ref); 
+    if (fromSelection == true) 
+    { 
+        desc.putEnumerated(cTID("Usng"), cTID("UsrM"), cTID("RvlS")); 
+    } 
+    else 
+    { 
+        desc.putEnumerated(cTID("Usng"), cTID("UsrM"), cTID("RvlA")); 
+    } 
+    executeAction(cTID("Mk "), desc, DialogModes.NO); 
+}; 
+
+// FUNCTION APPLY LAYER MASK()
+function applyLayerMask()
+{
+  // =======================================================
+  var id1949 = charIDToTypeID( "Dlt " );
+  var desc398 = new ActionDescriptor();
+  var id1950 = charIDToTypeID( "null" );
+  var ref291 = new ActionReference();
+  var id1951 = charIDToTypeID( "Chnl" );
+  var id1952 = charIDToTypeID( "Chnl" );
+  var id1953 = charIDToTypeID( "Msk " );
+  ref291.putEnumerated( id1951, id1952, id1953 );
+  desc398.putReference( id1950, ref291 );
+  var id1954 = charIDToTypeID( "Aply" );
+  desc398.putBoolean( id1954, true );
+  executeAction( id1949, desc398, DialogModes.NO );
+};
