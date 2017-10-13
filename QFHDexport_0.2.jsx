@@ -18,12 +18,18 @@ function main()
         
     // -- code starts here --
     
-    //get filename. If canceled -> abort
-    var saveFile = File.openDialog("Y U NO type name? ლ(ಠ益ಠლ)");        
+    //get filename. If canceled -> abort    
+    var saveFile = File.saveDialog ("Y U NO type name? ლ(ಠ益ಠლ)", ".png")
+
     if(saveFile == null)   
         return;
         
     var fileName = saveFile.name;
+
+    if(!fileName.match(".png$"))
+    {
+        fileName += ".png";
+    }
     
     //get original document and create the flattened image
     var originalDocument = app.activeDocument;
@@ -34,7 +40,9 @@ function main()
     //set save options
     var saveOptions = new ExportOptionsSaveForWeb();
     saveOptions.format = SaveDocumentType.PNG;
-    saveOptions.PNG8 = false; 
+    saveOptions.PNG8 = false;
+
+    // TODO: options for optimisation
 
     //generate each output
     for(var i = 0; i < Outputs.length; ++i)
